@@ -5,4 +5,4 @@ Enhancment comes in three forms:
 2. asymmetric grid-traveling that makes harder to capture checkpoints and survive as the movement is not linear but slightly diagonal.
 3. It is possible to temporarily speed-up the game by pressing the space-bar and make the game more challenging
 
-In-game UI offers explanation on power ups and how to use them, ESC keybinding is used for pausing and quitting a game.
+In-game UI offers explanation on power ups and how to use them, ESC keybinding is used to quit the game while Pause button to pause the game.

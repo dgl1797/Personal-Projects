@@ -1,0 +1,1 @@
+export const environment = {"production":false,"javaHost":"http://localhost:5001/apis","chatHost":"ws://localhost:5002"}

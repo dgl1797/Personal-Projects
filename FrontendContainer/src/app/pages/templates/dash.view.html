@@ -1,0 +1,190 @@
+@if(errorMessage){
+<app-alert [message]="errorMessage" type="error" />
+}
+@if(infoMessage){
+<app-alert [message]="infoMessage" type="info" />
+}
+@if(warningMessage){
+<app-alert [message]="warningMessage" type="warning" />
+}
+@if(successMessage){
+<app-alert [message]="successMessage" type="success" />
+}
+<audio #notificationSound>
+  <source src="assets/notification.mp3" type="audio/mp3">
+</audio>
+<div class="navheight navbar z-[5] bg-sky-700 shadowed space-x-4">
+  <div class="flex-none">
+    <button class="btn rounded-full btn-ghost text-2xl" (click)="goto('home')">
+      <img ngSrc="assets/AppIcon.ico" width="48" height="48">
+    </button>
+  </div>
+  <div class="flex-1 justify-center text-2xl">
+    @if(isLoading){
+    <span class="loading loading-infinity loading-lg text-pink-700"></span>
+    }@else if ((userInfo?.type ?? "") === "premium") {
+    <button class="pl-2 pr-2 btn bg-pink-700 text-white hover:bg-pink-500">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+        class="inline-block w-5 h-5 stroke-current">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12,4 v16 M4,12 h16"></path>
+      </svg>
+      <div class="hidden sm:block">New Project</div>
+    </button>
+    }@else {
+    <button class="pl-2 pr-2 btn bg-pink-700 text-white hover:bg-pink-500">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+        class="inline-block humbleicons hi-certificate w-5 h-5 stroke-current">
+        <path xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+          stroke-width="2"
+          d="M9 17v4l3-2 3 2v-4M13.957 4.275l-.323-.444a2.022 2.022 0 00-3.268 0l-.323.444L9.5 4.19A2.021 2.021 0 007.19 6.5l.085.543-.444.323a2.021 2.021 0 000 3.268l.444.323-.085.542A2.021 2.021 0 009.5 13.81l.543-.085.323.444a2.022 2.022 0 003.268 0l.323-.444.542.085a2.021 2.021 0 002.311-2.31l-.085-.543.444-.323a2.022 2.022 0 000-3.268l-.444-.323.085-.542A2.021 2.021 0 0014.5 4.19l-.543.085z" />
+      </svg>
+      <div class="hidden md:block">Upgrade Account</div>
+    </button>
+    }
+  </div>
+  @if(notifications.length > 0){
+  <div class="dropdown dropdown-end">
+    <div tabindex="1" role="button" class="btn btn-ghost btn-circle">
+      <div class="indicator">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+        </svg>
+        <span class="badge badge-xs badge-primary indicator-item absolute z-[3]"></span>
+      </div>
+    </div>
+    <ul tabindex="1"
+      class="mt-0 z-[8] p-2 shadowed shadowed-majority menu menu-sm dropdown-content bg-sky-700 rounded-box w-64">
+      @for (n of notifications; track $index) {
+      <li>
+        <label for="chat-drawer" class="drawer-button" (click)="clearNotification(n)">New messages from {{n}}</label>
+      </li>
+      }
+    </ul>
+  </div>
+  }@else {
+  <div class="flex rounded-full w-10 justify-center items-center bg-none" style="aspect-ratio: 1/1;">
+    <div class="indicator">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+      </svg>
+    </div>
+  </div>
+  }
+  <div class="dropdown dropdown-end">
+    <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
+      <div class="w-10 rounded-full !flex justify-center items-center text-3xl bg-slate-500">
+        {{username[0].toUpperCase()}}
+      </div>
+    </div>
+    <ul tabindex="0"
+      class="mt-0 z-[8] p-2 shadowed shadowed-majority menu menu-sm dropdown-content bg-sky-700 rounded-box w-52">
+      <li><button (click)="goto('profile')">Profile</button></li>
+      <li><button (click)="goto('projects')">Projects</button></li>
+      <li><button (click)="goto('tasks')">Tasks</button></li>
+      <li><button (click)="playNotification()">Notification</button></li>
+      <li><button (click)="logout()">Logout</button></li>
+    </ul>
+  </div>
+</div>
+@if(isLoading){
+<span class="absolute loading loading-ring loading-lg top-1/2 left-1/2 text-pink-700"></span>
+}@else {
+<div class="drawer drawer-end">
+  <input id="chat-drawer" type="checkbox" class="drawer-toggle" />
+  <div class="drawer-content">
+    <router-outlet></router-outlet>
+    @if(channels.length > 0){
+    <label for="chat-drawer" class="fixed bottom-2 right-8 drawer-button btn btn-square bg-sky-700 hover:bg-sky-800">
+      <svg width="50" height="50" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none">
+        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+        <g id="SVGRepo_iconCarrier">
+          <path stroke="#ffffff" stroke-linejoin="round" stroke-width="2"
+            d="M9.88235 15C13.261 15 16 12.5376 16 9.5C16 6.46243 13.261 4 9.88235 4C6.50367 4 3.76471 6.46243 3.76471 9.5C3.76471 10.3179 3.96327 11.094 4.31942 11.7917L3 15L6.82353 14.2642C7.72335 14.7322 8.76806 15 9.88235 15Z">
+          </path>
+          <path stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M10.8042 18.1242C11.759 18.6784 12.8966 19 14.1176 19C15.2319 19 16.2766 18.7322 17.1765 18.2642L21 19L19.6806 15.7917C20.0367 15.094 20.2353 14.3179 20.2353 13.5C20.2353 12.2553 19.7754 11.1071 19 10.1854C18.251 9.29505 17.2076 8.61598 16 8.26526">
+          </path>
+          <circle r="1" fill="#ffffff" transform="matrix(-1 0 0 1 13 9.5)"></circle>
+          <circle r="1" fill="#ffffff" transform="matrix(-1 0 0 1 10 9.5)"></circle>
+          <circle r="1" fill="#ffffff" transform="matrix(-1 0 0 1 7 9.5)"></circle>
+        </g>
+      </svg>
+    </label>
+    }
+  </div>
+  <div class="drawer-side overflow-hidden z-20">
+    <label for="chat-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
+    <div class="w-3/4 md:w-[50%] min-h-full bg-slate-600 relative">
+      <!-- Chats Bar -->
+      <div class="flex w-full navheight overflow-x- overflow-y-hidden scrolled-secondary">
+        @for (channel of channels; track $index) {
+        <div class="flex-grow min-w-[90px] btn btn-square rounded-none bg-sky-700 hover:bg-pink-700"
+          [classList]="channel === selectedTarget ? 'flex-grow min-w-[90px] btn btn-square rounded-none bg-sky-700 hover:bg-pink-700 selected-chat' : 'flex-grow min-w-[90px] btn btn-square rounded-none bg-sky-700 hover:bg-pink-700'"
+          (click)="switchToOpenTarget(channel)">
+          {{channel}}</div>
+        }
+      </div>
+      <!-- End Chats Bar -->
+      <!-- Chat Body -->
+      @if (currentChat !== undefined) {
+      <div class="mt-2 chatboard-page-full overflow-y-auto overflow-x-hidden scrolled relative space-y-2">
+        @for (message of currentChat; track $index) {
+        @if(message.sender === username){
+        <div class="chat chat-end">
+          <div class="chat-bubble chat-bubble-primary shadowed min-w-24">
+            <div class="chat-header underline text-white">Me</div>
+            <p>{{message.content}}</p>
+            <time class="text-xs opacity-50 float-end">{{message.timestamp | timepipe}}</time>
+          </div>
+        </div>
+        }@else {
+        <div class="chat chat-start">
+          <div class="chat-bubble chat-bubble-primary bg-slate-400 shadowed-attention min-w-24">
+            <div class="chat-header underline" style="color: rgb(0, 69, 103);">
+              {{message.sender}}
+            </div>
+            <p>{{message.content}}</p>
+            <time class="text-xs opacity-50 float-end">{{message.timestamp | timepipe}}</time>
+          </div>
+        </div>
+        }
+        }
+      </div>
+      <div class="fixed left-0 bottom-3 w-full h-16 p-2 flex justify-center items-center">
+        <!-- X Button -->
+        <button class="absolute left-5 btn btn-square outline-black text-white bg-pink-700 hover:bg-pink-600"
+          (click)="removeTargetedChat()">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+        <!-- X Button -->
+        <input #messageInput type="text" placeholder="Send message"
+          class="input input-bordered input-info w-full max-w-sm" (keyup.enter)="sendMessage()" />
+        <div class="absolute right-5 btn btn-square bg-sky-700 hover:bg-sky-800" (click)="sendMessage()">
+          <svg width="30" height="30" fill="#ffffff" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
+            xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 495.003 495.003" xml:space="preserve">
+            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+            <g id="SVGRepo_iconCarrier">
+              <g id="XMLID_51_">
+                <path id="XMLID_53_"
+                  d="M164.711,456.687c0,2.966,1.647,5.686,4.266,7.072c2.617,1.385,5.799,1.207,8.245-0.468l55.09-37.616 l-67.6-32.22V456.687z">
+                </path>
+                <path id="XMLID_52_"
+                  d="M492.431,32.443c-1.513-1.395-3.466-2.125-5.44-2.125c-1.19,0-2.377,0.264-3.5,0.816L7.905,264.422 c-4.861,2.389-7.937,7.353-7.904,12.783c0.033,5.423,3.161,10.353,8.057,12.689l125.342,59.724l250.62-205.99L164.455,364.414 l156.145,74.4c1.918,0.919,4.012,1.376,6.084,1.376c1.768,0,3.519-0.322,5.186-0.977c3.637-1.438,6.527-4.318,7.97-7.956 L494.436,41.257C495.66,38.188,494.862,34.679,492.431,32.443z">
+                </path>
+              </g>
+            </g>
+          </svg>
+        </div>
+      </div>
+      }
+      <!-- End Chat Body -->
+    </div>
+  </div>
+</div>
+}

@@ -1,0 +1,100 @@
+<div class="hero min-h-screen bg-base-200">
+  @if(httpError){
+  <app-alert [message]="httpError" type="error" />
+  }
+  <div class="flex w-full md:w-4/5 h-5/6">
+    <div class="hidden md:flex w-full md:w-1/2 md:h-full">
+      <div class="w-full h-full text-xl flex flex-col justify-evenly text-center">
+        <div class="invisible md:visible flex items-center flex-col">
+          <h3 class="text-sm">Not Just a Todo App</h3>
+          <img ngSrc="assets/AppIcon.ico" width="120" height="120" />
+        </div>
+        <p><a href="#login" class="text-pink-700 underline" (click)="swapSignUp('login')">Login</a> to join your
+          team and coordinate on projects and tasks to achieve optimal productivity</p>
+        <p>
+          or <a href="#signup" class="text-pink-700 underline" (click)="swapSignUp('signup')">Register</a> to choose a
+          plan and start creating your own projects, and participate your team works
+        </p>
+      </div>
+    </div>
+    <div class="w-full h-full md:w-1/2 flex justify-center items-center md:p-10">
+      <div class="w-full h-full bg-sky-700 rounded-md shadowed flex flex-col items-center text-white">
+        <h1 class="text-xl md:text-3xl pt-3">{{isSignup ? "Sign Up" : "Log In"}}</h1>
+        <form [formGroup]="isSignup ? signupFormGroup : loginFormGroup" (submit)="formSubmit()"
+          class="flex flex-col w-full h-full p-8 space-y-3">
+
+          <div class="flex w-full justify-between items-center">
+            <label for="username" class="text-xs sm:text-sm">Username</label>
+            @if(
+            (!isSignup && !!loginFormGroup.get('username')?.errors) ||
+            (isSignup && signupFormGroup.get('username')?.errors)
+            ){
+            <label for="username" class="label-text-alt text-red-700">Username is required</label>
+            }
+          </div>
+          <input class="input input-bordered input-primary input-sm" id="username" type="text"
+            formControlName="username" required />
+
+          @if(isSignup){
+          <div class="flex w-full justify-between items-center">
+            <label for="email" class="text-xs sm:text-sm">Email</label>
+            @if(!!signupFormGroup.get('email')?.errors){
+            <label for="email" class="label-text-alt text-red-700">Invalid email format</label>
+            }
+          </div>
+          <input class="input input-bordered input-primary input-sm" id="email" type="email" formControlName="email"
+            required />
+          }
+
+          <div class="flex w-full justify-between items-center">
+            <label for="password" class="text-xs sm:text-sm">Password</label>
+            @if(
+            (!isSignup && !!loginFormGroup.get('password')?.errors) ||
+            (isSignup && signupFormGroup.get('password')?.errors)
+            ){
+            <label for="password" class="label-text-alt text-red-700">Password is required</label>
+            }
+          </div>
+          <input class="input input-bordered input-primary input-sm" id="password" type="password"
+            formControlName="password" required />
+
+          @if(isSignup){
+          <div class="flex w-full justify-between items-center">
+            <label for="confirm-password" class="text-xs sm:text-sm">Confirm Password</label>
+            @if(!!signupFormGroup.get('confirmPassword')?.errors || signupFormGroup.hasError('invalidConfirm')){
+            <label for="confirm-password" class="label-text-alt text-red-700">Passwords must match</label>
+            }
+          </div>
+          <input class="input input-bordered input-primary input-sm" id="confirm-password" type="password"
+            formControlName="confirmPassword" required>
+
+          <div class="flex justify-evenly items-center">
+            <div>
+              <input id="premium-select" type="radio" formControlName="subPlan" name="subPlan" value="premium" checked
+                class="m-2 peer" />
+              <label for="premium-select" class="peer-checked:text-pink-700">Premium</label>
+            </div>
+
+            <div>
+              <input id="standard-select" type="radio" formControlName="subPlan" name="subPlan" value="standard"
+                class="m-2 peer" />
+              <label for="standard-select" class="peer-checked:text-pink-700">Standard</label>
+            </div>
+          </div>
+          }
+
+          <button type="submit"
+            [disabled]="(isSignup && signupFormGroup.invalid) || (!isSignup && loginFormGroup.invalid) || isLoading"
+            class="btn btn-accent bg-pink-700 border-pink-700 text-white hover:bg-pink-500 hover:border-pink-500">{{
+            isSignup ? "Signup" : "Login"}}
+          </button>
+
+          <p class="md:hidden block text-sm text-center !mt-8"><a href="#login" class="text-pink-700 underline"
+              (click)="swapSignUp('login')">Login</a> to join your team or <a href="#signup"
+              class="text-pink-700 underline" (click)="swapSignUp('signup')">Register</a> to manage your projects </p>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

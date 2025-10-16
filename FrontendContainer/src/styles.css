@@ -1,0 +1,74 @@
+/* You can add global styles to this file, and also import other style files */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-slate-200 dark:bg-slate-800 dark:text-white;
+}
+
+:root {
+  --majority-color: rgb(30 41 59); /* slate-800 */
+  --attention-color: rgb(0, 69, 103); /* modified sky-700 */
+  --action-color: rgb(190 24 93); /* pink-700 */
+  --navbar-height: 4rem /* h-16 */;
+}
+
+.shadowed {
+  box-shadow: 0px 0px 13px 4px var(--action-color);
+}
+.shadowed-majority {
+  box-shadow: 0px 0px 13px 4px var(--majority-color);
+}
+.shadowed-attention {
+  box-shadow: 0px 0px 13px 4px var(--attention-color);
+}
+.navheight {
+  height: var(--navbar-height);
+}
+.scrolled::-webkit-scrollbar {
+  width: 0.8rem;
+}
+.scrolled-secondary::-webkit-scrollbar {
+  height: 0.8rem;
+}
+.scrolled::-webkit-scrollbar-track {
+  background: none;
+}
+.scrolled-secondary::-webkit-scrollbar-track {
+  background: none;
+}
+.scrolled:hover::-webkit-scrollbar-thumb {
+  @apply rounded-sm;
+  background: rgba(0, 69, 103, 0.7);
+  transition: all 0.2s ease-in-out;
+}
+.scrolled-secondary::-webkit-scrollbar-thumb {
+  @apply rounded-sm;
+  background: rgba(190, 24, 93, 0.7);
+  transition: all 0.2s ease-in-out;
+}
+.scrolled::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 69, 103, 1);
+}
+.scrolled-secondary::-webkit-scrollbar-thumb:hover {
+  background: rgba(190, 24, 93, 1);
+}
+.view-header {
+  @apply w-full text-center text-2xl pt-6;
+}
+.dashboard-page-full {
+  width: 100%;
+  height: calc(100vh - var(--navbar-height));
+}
+.chatboard-page-full {
+  width: 98%;
+  height: calc(100vh - var(--navbar-height) - 0.5rem - 0.8rem - 4.2rem);
+}
+.selected-chat {
+  @apply bg-pink-700 pointer-events-none;
+}
+
+input {
+  @apply text-black dark:text-white;
+}

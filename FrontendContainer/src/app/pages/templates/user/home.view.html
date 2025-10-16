@@ -1,0 +1,37 @@
+<div class="grid w-full grid-cols-4 dashboard-page-full">
+  <div class="hidden sm:flex w-full h-full col-start-1 col-end-2 p-4">
+    <div
+      class="w-full rounded-md bg-slate-600 shadowed-attention overflow-y-auto overflow-x-clip text-ellipsis scrolled"
+      style="height: calc(100vh - var(--navbar-height) - 2rem);">
+      <!-- Online List -->
+      <h1 class="view-header select-none">Online Users</h1>
+      <div class="divider before:bg-sky-700 after:bg-sky-700 w-[98%] ml-[1%]"></div>
+      <div class="flex flex-col">
+        @for (user of onlineList; track $index) {
+        <label for="chat-drawer" class="w-full h-14 drawer-button btn-ghost pt-2 pl-2"
+          (click)="handleOnlineUserClick(user)">{{user}}</label>
+        <!-- <div class="w-full h-14 btn-ghost pt-2 pl-2">{{user}}</div> -->
+        }
+      </div>
+    </div>
+  </div>
+  <div class="flex flex-col justify-evenly col-start-1 sm:col-start-2 col-end-5 p-4 space-y-4">
+    <div
+      class="w-full h-full rounded-md bg-slate-600 shadowed-attention overflow-y-auto overflow-x-clip text-ellipsis scrolled"
+      style="height: calc((100vh - var(--navbar-height) - 3rem)/2);">
+      <!-- Profile Bar -->
+
+    </div>
+    <div
+      class="w-full h-full rounded-md bg-slate-600 shadowed-attention overflow-y-auto overflow-x-clip text-ellipsis scrolled"
+      style="height: calc((100vh - var(--navbar-height) - 3rem)/2);">
+      <!-- Incomplete tasks Bar -->
+
+    </div>
+    <div
+      class="sm:hidden w-full h-full rounded-md bg-slate-600 shadowed-attention overflow-y-auto overflow-x-clip text-ellipsis scrolled"
+      style="height: calc((100vh - var(--navbar-height) - 3rem)/2);">
+      <!-- sm chat list -->
+    </div>
+  </div>
+</div>

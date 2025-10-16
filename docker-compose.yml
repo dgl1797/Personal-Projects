@@ -1,0 +1,143 @@
+services:
+  # frontend server deliver pages via angular, it contacts the backend load balancers to receive responses
+  frontend:
+    image: node:20-trixie-slim
+    container_name: gui
+    volumes:
+      - ./FrontendContainer:/workspace
+    working_dir: /workspace
+    environment:
+      - JAVA_HOST=localhost
+      - JAVA_PORT=5001
+      - PYTHON_HOST=localhost
+      - PYTHON_PORT=5002
+    ports:
+      - 5000:5000
+    tty: true
+    stdin_open: true
+    entrypoint: ./entrypoint.sh
+    command: ["npm", "start"]
+    networks:
+      - javanet
+      - pynet
+  # Basic Operations Java Backend + MySql
+  mysqldata:
+    image: mysql:8.0-debian
+    container_name: sqldatabase
+    volumes:
+      - ./MySQL/scripts:/docker-entrypoint-initdb.d # initialization logic populated with all the setup scripts
+      - ./MySQL/data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=njtodo
+    networks:
+      - javanet
+  session:
+    image: redis:7.2-alpine3.18
+    container_name: sessioncontroller
+    volumes:
+      - ./RedisSession:/data
+    networks:
+      - javanet
+  javaserver:
+    image: eclipse-temurin:17-jdk-alpine
+    volumes:
+      - ./JavaContainer:/workspace
+    working_dir: /workspace
+    environment:
+      - PORT=5001
+      - DB_HOST=mysqldata
+      - DB_PORT=3306
+      - DB_NAME=njtodo
+      - DB_USER=root
+      - DB_PASS=root
+      - SESSION_HOST=session
+      - SESSION_PORT=6379
+      - JWT_SECRET=LIA67EmYISrs4aRu6yd0b1m1dq8j39Zq
+      - ALLOWED_ORIGINS=http://frontend:5000,http://session:6397,http://localhost:5000
+    ports:
+      - "5001:5001" # local machine can still refer to this container as javaserver: http://javaserver:5001/apis/auth
+    tty: true
+    stdin_open: true
+    entrypoint: ./entrypoint.sh
+    deploy:
+      mode: replicated
+      replicas: 1
+      endpoint_mode: vip # sets a VIP between client and server so the connection will be kept between them
+    depends_on:
+      - mysqldata
+      - session
+    networks:
+      - javanet
+
+  # chat server is handled by python
+  mongodata:
+    image: mongo:7.0-rc-jammy
+    container_name: mongodatabase
+    volumes:
+      - ./Mongo:/data/db
+    networks:
+      - pynet
+  chatstates:
+    image: redis:7.2-alpine3.18
+    container_name: chatstates
+    volumes:
+      - ./RedisChats:/data
+    networks:
+      - pynet
+  pythonserver:
+    image: python:3.13-rc-alpine3.17
+    volumes:
+      - ./PythonContainer:/workspace
+    working_dir: /workspace
+    environment:
+      - PORT=5002
+      - DB_HOST=mongodata
+      - DB_PORT=27017
+      - DB_NAME=njchats
+      - STATE_HOST=chatstates
+      - STATE_PORT=6379
+    tty: true
+    stdin_open: true
+    entrypoint: ./entrypoint.sh
+    deploy:
+      mode: replicated
+      replicas: 1
+      endpoint_mode: dnsrr
+    depends_on:
+      - mongodata
+      - chatstates
+    networks:
+      - pynet
+  pythonbalancer:
+    image: nginx:mainline-alpine
+    container_name: pythonbalancer
+    volumes:
+      - ./PythonBalancer/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./PythonBalancer/entrypoint.sh:/entrypoint.sh
+    tty: true
+    stdin_open: true
+    working_dir: /
+    entrypoint: ./entrypoint.sh pythonserver:5002
+    ports:
+      - "5002:5002"
+    depends_on:
+      - pythonserver # not enough
+    networks:
+      - pynet
+
+networks:
+  javanet:
+    ipam:
+      driver: default
+      config:
+        - subnet: "192.168.12.0/24"
+          gateway: "192.168.12.1"
+          ip_range: "192.168.12.16/28" # *.*.*.*0001*0000 where asterisks are the mask
+  pynet:
+    ipam:
+      driver: default
+      config:
+        - subnet: "192.168.13.0/24"
+          gateway: "192.168.13.1"
+          ip_range: "192.168.13.32/27" # *.*.*.*001*00000 where asterisks are the mask

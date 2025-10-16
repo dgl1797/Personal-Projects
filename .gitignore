@@ -1,5 +1,5 @@
 /**/*.env
 /Mongo/
-/MySQL/
+/MySQL/data
 /RedisSession/
 /RedisChats/

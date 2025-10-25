@@ -75,7 +75,7 @@ services:
     image: mongo:7.0-rc-jammy
     container_name: mongodatabase
     volumes:
-      - ./Mongo:/data/db
+      - ./Mongo/data:/data/db
     networks:
       - pynet
   chatstates:

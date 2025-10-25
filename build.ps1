@@ -1,7 +1,7 @@
-if (Test-Path -path ".\MySQL\data"){ Remove-Item .\MySQL\data -Recurse -Force }
-if (Test-Path -path ".\Mongo\data"){ Remove-Item .\Mongo -Recurse -Force }
-if (Test-Path -path ".\Redis"){ Remove-Item .\Redis -Recurse -Force }
+Remove-Item .\MySQL\data -Recurse -Force
+Remove-Item .\Mongo -Recurse -Force
+Remove-Item .\Redis -Recurse -Force
 mkdir .\MySQL\data
-mkdir .\Mongo\data
+mkdir .\Mongo
 mkdir .\Redis
 docker-compose up -d --build

@@ -5,6 +5,7 @@ Collection of personal projects developed to further refine knowledge about fram
 **Used Tech:**
 - Ollama for custom models pulling and selection
 - CrewAI Agents definitions and building of the Tasks orchestration
+***
 **Description:**<br>
 This project is a collection of personal projects developed to practice with the concepts learned during the DeepLearning.AI Course on CrewAI, focused on Agentic AI building using the open-source library CrewAI.
 

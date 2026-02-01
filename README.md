@@ -4,10 +4,10 @@ Collection of personal projects developed to further refine knowledge about fram
 ## [Coursera - DeepLearning.AI Course Projects](https://github.com/dgl1797/Personal-Projects/tree/Research_AI_Agent)
 **Used Tech:**
 - Ollama for custom models pulling and selection
-- CrewAI Agents definitions and building of the Tasks orchestration
+- CrewAI Open Source Library for Agentic AI development
 ***
 **Description:**<br>
-This project is a collection of personal projects developed to practice with the concepts learned during the DeepLearning.AI Course on CrewAI, focused on Agentic AI building using the open-source library CrewAI.
+Collection of personal projects developed to practice with the concepts learned during the DeepLearning.AI Course on CrewAI, focused on Agentic AI building using the open-source library CrewAI.
 
 The main learning goals of the projects are:
 - Learning what AI Agents are

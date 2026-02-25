@@ -26,7 +26,7 @@ The main learning goals of the projects are:
 - MongoDB
 ***
 **Description:**<br>
-A project aiming to develop a management system for organizing work and projects, tasks assignments within a project, and live chat with available collegues. 
+A project aiming to develop a management system for organizing work and projects, tasks assignments within a project, and live chat with available collegues. Live chat is implemented and distributed across Python Servers through asyncio and websocket, using Redis as a coordinator. Access and Management System are implemented using Java for a more consistent payload checking and interaction with MySQL.
 
 The main learning goals achieved with this project were:
 - Learning basics-to-advanced Frontend development with Angular and TailwindCSS

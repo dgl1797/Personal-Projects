@@ -53,6 +53,7 @@ services:
       - DB_PASS=root
       - SESSION_HOST=session
       - SESSION_PORT=6379
+      # below for dev environment only
       - JWT_SECRET=LIA67EmYISrs4aRu6yd0b1m1dq8j39Zq
       - ALLOWED_ORIGINS=http://frontend:5000,http://session:6397,http://localhost:5000
     ports:

@@ -395,55 +395,7 @@ All messages are JSON-encoded with a `type` field:
 ### MySQL Schema (javanet — Structured Data)
 
 The Java backend uses JPA/Hibernate ORM to interact with the MySQL database. The schema follows the Entity-Relationship diagram below:
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                         MySQL — njtodo                           │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                  │
-│  ┌─────────────┐       ┌──────────────────────┐                 │
-│  │    User     │       │  UserParticipateProject│                │
-│  ├─────────────┤       ├──────────────────────┤                 │
-│  │ id (PK)     │──┐    │ uid (FK)             │──┐              │
-│  │ email (UQ)  │  │    │ pjid (FK)            │  │              │
-│  │ username(UQ)│  └───→│ role                  │  │              │
-│  │ password    │       │ added_time (TIMESTAMP)│  │              │
-│  │ salt        │       │ ┌─────────────────┐   │  │              │
-│  │ premium(BOOL)│      │ │ UserProjectId   │   │  │              │
-│  └─────────────┘       │ │ (Embedded PK)   │   │  │              │
-│         │              │ └─────────────────┘   │  │              │
-│         │              └──────────────────────┘  │              │
-│         │                      ↑                 │              │
-│         │                      │                 │              │
-│         │              ┌───────┴───────┐         │              │
-│         │              │    Project    │         │              │
-│         │              ├───────────────┤         │              │
-│         └──────────────│ id (PK)       │◄────────┘              │
-│                        │ name          │                        │
-│                        │ owner (FK→User)│                       │
-│                        │ UQ(owner,name)│                        │
-│                        └───────┬───────┘                        │
-│                                │                                │
-│                        ┌───────┴───────┐                        │
-│                        │     Task      │                        │
-│                        ├───────────────┤                        │
-│                        │ id (PK)       │                        │
-│                        │ name          │                        │
-│                        │ pjid (FK→Proj)│                        │
-│                        │ state (ENUM)  │                        │
-│                        │ description   │                        │
-│                        │ UQ(pjid,name) │                        │
-│                        └───────┬───────┘                        │
-│                                │                                │
-│                        ┌───────┴──────────┐                     │
-│                        │  user_execute_task│                     │
-│                        ├──────────────────┤                     │
-│                        │ tid (FK→Task)    │                     │
-│                        │ uid (FK→User)    │                     │
-│                        └──────────────────┘                     │
-│                                                                  │
-└─────────────────────────────────────────────────────────────────┘
-```
+![diagram_image](./docs/ER.png)
 
 **Key Design Decisions:**
 - **User** entity has a ManyToMany self-relationship through `UserParticipateProject` (join table with extra columns like `role`, `added_time`).

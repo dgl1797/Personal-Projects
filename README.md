@@ -9,6 +9,7 @@ Collection of personal projects developed to further refine knowledge about fram
 - MySQL
 - Redis
 - MongoDB
+- AI Integration in Development Workflow
 ***
 **Description:**<br>
 A project aiming to develop a management system for organizing work and projects, tasks assignments within a project, and live chat with available collegues. Live chat is implemented and distributed across Python Servers through asyncio and websocket, using Redis as a coordinator. Access and Management System are implemented using Java for a more consistent payload checking and interaction with MySQL.
@@ -21,6 +22,7 @@ The main learning goals achieved with this project were:
 - Organized messaging system between servers to discover and correctly deliver messages to destination nodes
 - Organizing nodes and replicas within Docker with a live-programming environment where base images are re-used to configure different nodes, organize them in networks, and allow VS-Code attatchment for live programming directly from within the container
 - Docker-based load-balancing using different entrypoint modes like VIP (in java servers) and DSNRR (in python servers)
+- Integrating AI Agent skills and tools to help and speedup repetitive development phases
 
 ## [Shadow Casting Algorithm in PyGame](https://github.com/dgl1797/Personal-Projects/tree/PySnake)
 **Used Tech:**

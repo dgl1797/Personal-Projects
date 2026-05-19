@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
+import com.personal.njtodo.EJBs.entities.Task;
+import com.personal.njtodo.EJBs.repositories.mysql.TaskSqlRepo;
 import com.personal.njtodo.EJBs.services.ProjectService;
 import com.personal.njtodo.EJBs.services.TaskService;
 import com.personal.njtodo.endpoints.DTOs.FullTaskDTO;
@@ -161,7 +163,19 @@ public class ProjectEndpoints {
       @PathParam("taskId") Long taskId, @HeaderParam("username") String requestingUser) {
 
     try {
-      projectService.checkAppartenence(requestingUser, projectId);
+      // Allow project owner OR task assignees to update task state
+      boolean isOwner = false;
+      try {
+        projectService.checkAppartenence(requestingUser, projectId);
+        isOwner = true;
+      } catch (ResponseCompatibleException e) {
+        // Not the owner, check if assignee
+        Task task = taskService.getFullById(taskId);
+        boolean isAssignee = task.getAssignees().stream()
+            .anyMatch(u -> u.getUsername().equals(requestingUser));
+        if (!isAssignee)
+          throw e;
+      }
       taskService.updateService(taskId, projectId, requestingUser, payload);
       return Response.status(200).entity("ok").build();
     } catch (ResponseCompatibleException rce) {

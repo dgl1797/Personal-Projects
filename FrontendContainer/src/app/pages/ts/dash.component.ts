@@ -3,9 +3,11 @@ import { UserCore } from '@App/DTOs/UserDTO';
 import { SessionStorage } from '@App/app.storage';
 import { TimePipe } from '@App/pipes/time.pipe';
 import { AppAlert } from '@Components/alert.component';
+import { CreateProjectModal } from '@Components/create-project-modal.component';
 import { AuthService } from '@Services/auth.service';
 import { ChatService } from '@Services/chat.service';
 import { UserService } from '@Services/user.service';
+import { ProjectService } from '@Services/project.service';
 import { NgOptimizedImage } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
@@ -29,12 +31,13 @@ interface Action {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [RouterOutlet, AppAlert, NgOptimizedImage, TimePipe],
+  imports: [RouterOutlet, AppAlert, NgOptimizedImage, TimePipe, CreateProjectModal],
   templateUrl: '../templates/dash.view.html',
 })
 export class Dashboard implements OnInit, OnDestroy {
   @ViewChild('notificationSound') audioPlayerRef!: ElementRef;
   @ViewChild('messageInput') messageInput!: ElementRef;
+  @ViewChild(CreateProjectModal) createProjectModal!: CreateProjectModal;
 
   private clearingInterval: any = undefined;
   private token: string = '';
@@ -196,6 +199,32 @@ export class Dashboard implements OnInit, OnDestroy {
   /** DASHBOARD */
   goto(destination: string): void {
     this.router.navigate(['dashboard', destination]);
+  }
+
+  openCreateProjectModal() {
+    this.createProjectModal.open();
+  }
+
+  onProjectCreated() {
+    this.pushAction({ type: 'success', message: 'Project created successfully!' });
+    // Refresh user info
+    this.userService.getUserInfo().subscribe({
+      next: (data) => {
+        this.userService.userInfo = data.userInfo;
+        this.session.userInfo = {
+          info: data.userInfo,
+          ownedProjects: data.ownedProjects,
+          participationSet: data.participationSet,
+          incompleteTasks: data.uncompleteTasks,
+        };
+      },
+      error: (error: HttpErrorResponse) => {
+        this.pushAction({
+          type: 'error',
+          message: typeof error.error === 'string' ? error.error : error.message,
+        });
+      },
+    });
   }
 
   private pushAction(action: Action) {

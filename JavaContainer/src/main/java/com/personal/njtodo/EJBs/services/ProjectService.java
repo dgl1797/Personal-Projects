@@ -55,11 +55,11 @@ public class ProjectService {
   }
 
   @Transactional
-  public Long save(String pname, String owner, Map<Long, String> participants) {
+  public Long save(String pname, String owner, Map<String, String> participants) {
     User ownerUser = entityManager.merge(userSqlRepo.getUserByUsername(owner));
     Project newProject = entityManager.merge(projectSqlRepo.save(new Project(pname, ownerUser)));
     participants.entrySet().stream()
-        .map(entry -> Map.entry(entityManager.getReference(User.class, entry.getKey()), entry.getValue()))
+        .map(entry -> Map.entry(userSqlRepo.getUserByUsername(entry.getKey()), entry.getValue()))
         .filter(entry -> entry.getKey() != null)
         .forEach(entry -> uppSqlRepo.save(new UserParticipateProject(entry.getKey(), newProject, entry.getValue())));
     return newProject.getId();

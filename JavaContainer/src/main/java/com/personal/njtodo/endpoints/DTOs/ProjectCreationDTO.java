@@ -5,9 +5,9 @@ import java.util.Map;
 
 public class ProjectCreationDTO {
   private String projectName;
-  private Map<Long, String> participants;
+  private Map<String, String> participants;
 
-  public ProjectCreationDTO(String pname, Map<Long, String> pids) {
+  public ProjectCreationDTO(String pname, Map<String, String> pids) {
     this.projectName = pname;
     this.participants = pids;
   }
@@ -20,11 +20,11 @@ public class ProjectCreationDTO {
     this.projectName = projectName;
   }
 
-  public Map<Long, String> getParticipants() {
+  public Map<String, String> getParticipants() {
     return this.participants;
   }
 
-  public void setParticipantIds(Map<Long, String> participants) {
+  public void setParticipants(Map<String, String> participants) {
     this.participants = participants;
   }
 
@@ -32,7 +32,7 @@ public class ProjectCreationDTO {
   public String toString() {
     return String.format("{\"project name\":\"%s\", \"participants list\":\"%s\"}", getProjectName(),
         Arrays.toString(getParticipants().entrySet().stream()
-            .map(entry -> String.format("\"id\":\"%d\", \"role\":\"%s\"", entry.getKey(), entry.getValue()))
+            .map(entry -> String.format("\"username\":\"%s\", \"role\":\"%s\"", entry.getKey(), entry.getValue()))
             .toArray()));
   }
 

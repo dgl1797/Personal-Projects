@@ -3,9 +3,11 @@ import { LoginPage } from '@Pages/login.component';
 import { NotFound } from '@Pages/notfound.component';
 import { ProjectsPage } from '@Pages/projects/projects.component';
 import { HomePage } from '@Pages/user/home.component';
+import { ProfilePage } from '@Pages/user/profile.component';
 import { AuthService } from '@Services/auth.service';
 import { ChatService } from '@Services/chat.service';
 import { UserService } from '@Services/user.service';
+import { ProjectService } from '@Services/project.service';
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
@@ -14,9 +16,10 @@ export const routes: Routes = [
     path: 'dashboard',
     component: Dashboard,
     // injects the services to the dashboard and all the children routes so that all shares the same service instance
-    providers: [AuthService, ChatService, UserService],
+    providers: [AuthService, ChatService, UserService, ProjectService],
     children: [
       { path: 'projects', component: ProjectsPage },
+      { path: 'profile', component: ProfilePage },
       { path: 'home', component: HomePage },
     ],
   },

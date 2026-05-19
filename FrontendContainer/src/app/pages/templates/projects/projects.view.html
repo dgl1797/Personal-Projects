@@ -1,3 +1,364 @@
-<div>
-  all your projects
+@if (isLoading) {
+<div class="flex justify-center items-center w-full" style="height: calc(100vh - var(--navbar-height));">
+  <span class="loading loading-ring loading-lg text-pink-700"></span>
 </div>
+} @else if (!selectedProjectId || !selectedProject) {
+<!-- ===================== PROJECT LIST VIEW ===================== -->
+<div class="p-4 w-full" style="min-height: calc(100vh - var(--navbar-height) - 2rem);">
+  
+  <app-create-project-modal (projectCreated)="onProjectCreated()" />
+
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold text-white">My Projects</h1>
+    @if (isPremium) {
+    <button class="btn bg-pink-700 text-white hover:bg-pink-600 shadow-lg" (click)="openCreateModal()">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-5 h-5 stroke-current mr-1">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12,4 v16 M4,12 h16"></path>
+      </svg>
+      New Project
+    </button>
+    }
+  </div>
+
+  <!-- Combined Project List -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    
+    @for (proj of ownedProjects; track proj.id) {
+    <div class="rounded-xl bg-slate-600 shadowed-attention hover:shadow-lg hover:scale-[1.02] transition-all duration-200 cursor-pointer border-l-4 border-sky-500 overflow-hidden"
+      (click)="selectProject(proj.id)">
+      <div class="p-4">
+        <div class="flex items-start justify-between">
+          <div class="flex-1 min-w-0">
+            <h3 class="text-white font-semibold text-lg truncate">{{ proj.name }}</h3>
+            <div class="flex items-center gap-2 mt-2">
+              <span class="badge badge-sm bg-sky-700 text-white border-none">Owner</span>
+              <span class="text-xs text-slate-400">
+                <svg xmlns="http://www.w3.org/2000/svg" class="inline-block w-3 h-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                Project
+              </span>
+            </div>
+          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-slate-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </div>
+      </div>
+    </div>
+    }
+
+    @for (proj of participatedProjects; track proj.id) {
+    <div class="rounded-xl bg-slate-600 shadowed-attention hover:shadow-lg hover:scale-[1.02] transition-all duration-200 cursor-pointer border-l-4 border-pink-500 overflow-hidden"
+      (click)="selectProject(proj.id)">
+      <div class="p-4">
+        <div class="flex items-start justify-between">
+          <div class="flex-1 min-w-0">
+            <h3 class="text-white font-semibold text-lg truncate">{{ proj.name }}</h3>
+            <div class="flex items-center gap-2 mt-2">
+              <span class="badge badge-sm bg-pink-700 text-white border-none">{{ proj.role }}</span>
+              <span class="text-xs text-slate-400">
+                <svg xmlns="http://www.w3.org/2000/svg" class="inline-block w-3 h-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                Participant
+              </span>
+            </div>
+          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-slate-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </div>
+      </div>
+    </div>
+    }
+
+  </div>
+
+  @if (ownedProjects.length === 0 && participatedProjects.length === 0) {
+  <div class="flex flex-col items-center justify-center mt-20 text-slate-400">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 mb-4 opacity-30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+    </svg>
+    <h2 class="text-xl font-semibold">No projects yet</h2>
+    <p class="text-sm mt-1">Create a new project or wait for an invitation</p>
+  </div>
+  }
+
+</div>
+
+} @else {
+<!-- ===================== PROJECT DETAIL VIEW ===================== -->
+<div class="p-4 w-full" style="min-height: calc(100vh - var(--navbar-height) - 2rem);">
+
+  <!-- Header -->
+  <div class="flex items-center gap-3 mb-6">
+    <button class="btn btn-ghost btn-square text-white hover:bg-slate-600" (click)="backToList()">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+    </button>
+    <div class="flex-1">
+      <h1 class="text-2xl font-bold text-white">{{ selectedProject.project.name }}</h1>
+      <p class="text-sm text-slate-400">
+        Owner: <span class="text-amber-400">{{ selectedProject.owner }}</span>
+        @if (isProjectOwner()) {
+        <span class="ml-2 badge badge-sm bg-amber-400 text-black border-none">You</span>
+        }
+      </p>
+    </div>
+    @if (isProjectOwner()) {
+    <button class="btn btn-sm btn-error text-white" (click)="deleteProject()">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+      </svg>
+      Delete
+    </button>
+    }
+  </div>
+
+  @if (isLoadingDetail) {
+  <div class="flex justify-center items-center w-full pt-20">
+    <span class="loading loading-ring loading-lg text-pink-700"></span>
+  </div>
+  } @else {
+
+  <!-- Error & Success Messages -->
+  @if (taskErrorMessage) {
+  <div class="alert alert-error mb-4 shadow-lg">
+    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+    <span>{{ taskErrorMessage }}</span>
+  </div>
+  }
+  @if (taskSuccessMessage) {
+  <div class="alert alert-success mb-4 shadow-lg">
+    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+    <span>{{ taskSuccessMessage }}</span>
+  </div>
+  }
+
+  <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
+    
+    <!-- Participants Panel -->
+    <div class="lg:col-span-1">
+      <div class="rounded-xl bg-slate-600 shadowed-attention overflow-hidden">
+        <div class="bg-sky-700 px-4 py-3">
+          <h2 class="text-white font-semibold flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            Participants ({{ selectedProject.project.participants.length }})
+          </h2>
+        </div>
+        <div class="p-3 space-y-2 max-h-[500px] overflow-y-auto scrolled">
+          @for (p of selectedProject.project.participants; track p.id) {
+          <div class="flex items-center gap-3 p-3 rounded-lg bg-slate-700 transition hover:bg-slate-650">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0"
+              [class]="p.username === selectedProject.owner ? 'bg-amber-600' : 'bg-sky-600'">
+              {{ p.username[0].toUpperCase() }}
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="text-white text-sm font-medium truncate">{{ p.username }}</div>
+              <div class="text-xs">
+                @if (p.username === selectedProject.owner) {
+                <span class="text-amber-400 font-semibold">👑 Owner</span>
+                } @else {
+                <span class="text-slate-400">{{ p.role }}</span>
+                }
+              </div>
+            </div>
+          </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Tasks Panel -->
+    <div class="lg:col-span-3">
+      <div class="rounded-xl bg-slate-600 shadowed-attention overflow-hidden">
+        <div class="bg-sky-700 px-4 py-3 flex justify-between items-center">
+          <h2 class="text-white font-semibold flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+            Tasks ({{ selectedProject.project.tasks.length }})
+          </h2>
+        </div>
+
+        <div class="p-4">
+          <!-- Add Task Form (only for premium owners) -->
+          @if (canManageTasks()) {
+          <div class="mb-4 p-4 rounded-lg bg-slate-700 border border-dashed border-slate-500">
+            <h3 class="text-white text-sm font-semibold mb-3 flex items-center gap-1">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12,4 v16 M4,12 h16" />
+              </svg>
+              Add New Task
+            </h3>
+            <div class="flex flex-col sm:flex-row gap-2 mb-2">
+              <input type="text" placeholder="Task name *" [(ngModel)]="newTaskName"
+                class="input input-bordered input-info input-sm flex-1 bg-slate-600 text-white" />
+            </div>
+            <div class="flex flex-col sm:flex-row gap-2 mb-2">
+              <input type="text" placeholder="Description (optional)" [(ngModel)]="newTaskDescription"
+                class="input input-bordered input-info input-sm flex-1 bg-slate-600 text-white" />
+            </div>
+            <!-- Assignee Selection -->
+            @if (availableAssignees.length > 0) {
+            <div class="mb-3">
+              <label class="text-xs text-slate-400 mb-1 block">Assign to participants</label>
+              <div class="flex flex-wrap gap-1">
+                @for (assignee of availableAssignees; track assignee) {
+                <label class="flex items-center gap-1 px-2 py-1 rounded cursor-pointer text-xs transition"
+                  [class]="newTaskAssignees.indexOf(assignee) >= 0 ? 'bg-sky-700 text-white' : 'bg-slate-600 text-slate-300 hover:bg-slate-500'">
+                  <input type="checkbox" [checked]="newTaskAssignees.indexOf(assignee) >= 0"
+                    (change)="toggleAssignee(assignee)" class="hidden" />
+                  {{ assignee }}
+                </label>
+                }
+              </div>
+            </div>
+            }
+            <div class="flex justify-end">
+              <button class="btn btn-sm bg-pink-700 text-white hover:bg-pink-600" (click)="addTask()"
+                [disabled]="!newTaskName.trim()">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12,4 v16 M4,12 h16" />
+                </svg>
+                Add
+              </button>
+            </div>
+          </div>
+          }
+
+          <!-- Kanban Board -->
+          @if (selectedProject.project.tasks.length === 0) {
+          <div class="flex flex-col items-center justify-center py-12 text-slate-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 mb-3 opacity-30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+            <p class="text-sm">No tasks in this project yet</p>
+            @if (canManageTasks()) {
+            <p class="text-xs mt-1">Use the form above to add the first task</p>
+            }
+          </div>
+          } @else {
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            
+            <!-- TODO Column -->
+            <div class="rounded-lg bg-slate-700 p-3">
+              <div class="flex items-center gap-2 mb-3 pb-2 border-b border-sky-500/30">
+                <div class="w-3 h-3 rounded-full bg-sky-400"></div>
+                <h3 class="text-sky-400 font-bold text-sm uppercase tracking-wider">To Do</h3>
+                <span class="ml-auto text-xs text-slate-400 bg-slate-600 px-2 py-0.5 rounded-full">
+                  {{ todoCount }}
+                </span>
+              </div>
+              <div class="space-y-2 min-h-[100px]">
+                @for (t of selectedProject.project.tasks; track t.id) {
+                @if (t.state === 'todo') {
+                <div class="bg-slate-800 rounded-lg p-3 shadow-md border-l-2 border-sky-500 group hover:bg-slate-750 transition">
+                  <div class="flex items-start justify-between">
+                    <div class="flex-1 min-w-0">
+                      <h4 class="text-white text-sm font-medium truncate">{{ t.name }}</h4>
+                      @if (t.description) {
+                      <p class="text-xs text-slate-400 mt-1 line-clamp-2">{{ t.description }}</p>
+                      }
+                    </div>
+                  </div>
+                  @if (canManageTasks()) {
+                  <div class="flex gap-1 mt-2 pt-2 border-t border-slate-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button class="btn btn-xs btn-ghost text-green-400 hover:bg-green-900/30" (click)="assignTask(t.id)" title="Start task">
+                      ▶ Start
+                    </button>
+                    <button class="btn btn-xs btn-ghost text-red-400 hover:bg-red-900/30 ml-auto" (click)="deleteTask(t.id)" title="Delete">
+                      ✕ Delete
+                    </button>
+                  </div>
+                  }
+                </div>
+                }
+                }
+              </div>
+            </div>
+
+            <!-- ONGOING Column -->
+            <div class="rounded-lg bg-slate-700 p-3">
+              <div class="flex items-center gap-2 mb-3 pb-2 border-b border-amber-500/30">
+                <div class="w-3 h-3 rounded-full bg-amber-400"></div>
+                <h3 class="text-amber-400 font-bold text-sm uppercase tracking-wider">Ongoing</h3>
+                <span class="ml-auto text-xs text-slate-400 bg-slate-600 px-2 py-0.5 rounded-full">
+                  {{ ongoingCount }}
+                </span>
+              </div>
+              <div class="space-y-2 min-h-[100px]">
+                @for (t of selectedProject.project.tasks; track t.id) {
+                @if (t.state === 'ongoing') {
+                <div class="bg-slate-800 rounded-lg p-3 shadow-md border-l-2 border-amber-500 group hover:bg-slate-750 transition">
+                  <div class="flex items-start justify-between">
+                    <div class="flex-1 min-w-0">
+                      <h4 class="text-white text-sm font-medium truncate">{{ t.name }}</h4>
+                      @if (t.description) {
+                      <p class="text-xs text-slate-400 mt-1 line-clamp-2">{{ t.description }}</p>
+                      }
+                    </div>
+                  </div>
+                  @if (canManageTasks()) {
+                  <div class="flex gap-1 mt-2 pt-2 border-t border-slate-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button class="btn btn-xs btn-ghost text-green-400 hover:bg-green-900/30" (click)="completeTask(t.id)" title="Complete">
+                      ✓ Complete
+                    </button>
+                    <button class="btn btn-xs btn-ghost text-red-400 hover:bg-red-900/30 ml-auto" (click)="deleteTask(t.id)" title="Delete">
+                      ✕ Delete
+                    </button>
+                  </div>
+                  }
+                </div>
+                }
+                }
+              </div>
+            </div>
+
+            <!-- DONE Column -->
+            <div class="rounded-lg bg-slate-700 p-3">
+              <div class="flex items-center gap-2 mb-3 pb-2 border-b border-green-500/30">
+                <div class="w-3 h-3 rounded-full bg-green-400"></div>
+                <h3 class="text-green-400 font-bold text-sm uppercase tracking-wider">Done</h3>
+                <span class="ml-auto text-xs text-slate-400 bg-slate-600 px-2 py-0.5 rounded-full">
+                  {{ doneCount }}
+                </span>
+              </div>
+              <div class="space-y-2 min-h-[100px]">
+                @for (t of selectedProject.project.tasks; track t.id) {
+                @if (t.state === 'done') {
+                <div class="bg-slate-800 rounded-lg p-3 shadow-md border-l-2 border-green-500 group hover:bg-slate-750 transition">
+                  <div class="flex items-start justify-between">
+                    <div class="flex-1 min-w-0">
+                      <h4 class="text-white text-sm font-medium truncate line-through opacity-60">{{ t.name }}</h4>
+                      @if (t.description) {
+                      <p class="text-xs text-slate-500 mt-1 line-clamp-2 line-through">{{ t.description }}</p>
+                      }
+                    </div>
+                  </div>
+                  @if (canManageTasks()) {
+                  <div class="flex gap-1 mt-2 pt-2 border-t border-slate-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button class="btn btn-xs btn-ghost text-red-400 hover:bg-red-900/30 ml-auto" (click)="deleteTask(t.id)" title="Delete">
+                      ✕ Delete
+                    </button>
+                  </div>
+                  }
+                </div>
+                }
+                }
+              </div>
+            </div>
+
+          </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+  }
+</div>
+}

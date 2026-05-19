@@ -1,8 +1,14 @@
-interface TaskPresentation {
+export interface TaskPresentation {
   id: number;
   name: string;
   pjid: number;
   project: string;
+}
+
+export interface ParticipationProjection {
+  id: number;
+  name: string;
+  role: string;
 }
 
 export interface UserCore {
@@ -13,7 +19,7 @@ export interface UserCore {
 
 export interface UserDTO {
   ownedProjects: { [key: number]: string };
-  participationSet: { [key: number]: string };
+  participationSet: ParticipationProjection[];
   uncompleteTasks: TaskPresentation[];
   userInfo: UserCore;
 }

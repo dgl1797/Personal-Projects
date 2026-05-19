@@ -23,7 +23,7 @@
     @if(isLoading){
     <span class="loading loading-infinity loading-lg text-pink-700"></span>
     }@else if ((userInfo?.type ?? "") === "premium") {
-    <button class="pl-2 pr-2 btn bg-pink-700 text-white hover:bg-pink-500">
+    <button class="pl-2 pr-2 btn bg-pink-700 text-white hover:bg-pink-500" (click)="openCreateProjectModal()">
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
         class="inline-block w-5 h-5 stroke-current">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12,4 v16 M4,12 h16"></path>
@@ -82,12 +82,12 @@
       class="mt-0 z-[8] p-2 shadowed shadowed-majority menu menu-sm dropdown-content bg-sky-700 rounded-box w-52">
       <li><button (click)="goto('profile')">Profile</button></li>
       <li><button (click)="goto('projects')">Projects</button></li>
-      <li><button (click)="goto('tasks')">Tasks</button></li>
       <li><button (click)="playNotification()">Notification</button></li>
       <li><button (click)="logout()">Logout</button></li>
     </ul>
   </div>
 </div>
+<app-create-project-modal (projectCreated)="onProjectCreated()" />
 @if(isLoading){
 <span class="absolute loading loading-ring loading-lg top-1/2 left-1/2 text-pink-700"></span>
 }@else {

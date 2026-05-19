@@ -19,8 +19,10 @@ import com.personal.njtodo.EJBs.services.projections.ParticipationProjection;
 import com.personal.njtodo.EJBs.services.projections.TaskWithProjectNameProjection;
 import com.personal.njtodo.EJBs.services.projections.UserAuthProjection;
 import com.personal.njtodo.endpoints.DTOs.UserDTO;
+import com.personal.njtodo.endpoints.DTOs.UserUpdateDTO;
 import com.personal.njtodo.endpoints.DTOs.UserWithProjectsDTO;
 import com.personal.njtodo.utilities.AccessManager;
+import com.personal.njtodo.utilities.AuthInformation;
 import com.personal.njtodo.utilities.Converters;
 import com.personal.njtodo.utilities.ResponseCompatibleException;
 
@@ -114,6 +116,29 @@ public class UserService {
         .toArray(TaskWithProjectNameProjection[]::new));
 
     return new UserWithProjectsDTO(userInfo, ownedProjects, participationSet, uncompleteTasks);
+  }
+
+  @Transactional
+  public void updateUser(String username, UserUpdateDTO payload) throws ResponseCompatibleException {
+    User user = userSqlRepo.getUserByUsername(username);
+    if (user == null)
+      (new ResponseCompatibleException(404, String.format("User %s doesn't exist", username))).logAndThrow();
+
+    // Update email if provided
+    if (payload.getEmail() != null && !payload.getEmail().isEmpty()) {
+      user.setEmail(payload.getEmail());
+    }
+
+    // Update password if both current and new are provided
+    if (payload.getCurrentPassword() != null && !payload.getCurrentPassword().isEmpty()
+        && payload.getNewPassword() != null && !payload.getNewPassword().isEmpty()) {
+      AccessManager.testPassword(payload.getCurrentPassword(), user.getPassword(), user.getSalt());
+      AuthInformation auth = AccessManager.encrypt(payload.getNewPassword());
+      user.setPassword(auth.getGeneratedPassword());
+      user.setSalt(auth.getGeneratedSalt());
+    }
+
+    userSqlRepo.save(user);
   }
 
 }

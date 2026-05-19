@@ -38,4 +38,17 @@ export class UserService {
       }
     );
   }
+
+  updateProfile(payload: { email?: string; currentPassword?: string; newPassword?: string }) {
+    return this.http.put(
+      `${this.baseUrl}/${this.serviceUri}/${this.username}`,
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${this.token}`,
+        },
+        responseType: 'text',
+      }
+    );
+  }
 }

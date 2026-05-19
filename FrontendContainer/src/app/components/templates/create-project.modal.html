@@ -1,0 +1,67 @@
+<dialog #modalDialog class="modal" (click)="onBackdropClick($event)">
+  <div class="modal-box bg-slate-600 max-w-lg">
+    <form method="dialog">
+      <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" (click)="close()">✕</button>
+    </form>
+    <h3 class="text-lg font-bold text-white mb-4">Create New Project</h3>
+    
+    <!-- Project Name -->
+    <div class="form-control w-full mb-4">
+      <label class="label">
+        <span class="label-text text-white">Project Name</span>
+      </label>
+      <input #projectNameInput type="text" placeholder="Enter project name" 
+        class="input input-bordered input-info w-full bg-slate-700 text-white" />
+    </div>
+
+    <!-- Participants Section -->
+    <div class="form-control w-full mb-2">
+      <label class="label">
+        <span class="label-text text-white">Participants</span>
+      </label>
+      
+      @for (participant of participants; track $index) {
+      <div class="flex gap-2 mb-2 items-center">
+        <input type="text" placeholder="Username" [(ngModel)]="participant.username"
+          class="input input-bordered input-info flex-1 bg-slate-700 text-white" />
+        <select [(ngModel)]="participant.role" 
+          class="select select-bordered select-info bg-slate-700 text-white w-28">
+          <option value="member">Member</option>
+          <option value="admin">Admin</option>
+          <option value="viewer">Viewer</option>
+        </select>
+        <button class="btn btn-ghost btn-square text-red-400 hover:bg-red-800" 
+          (click)="removeParticipant($index)">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      }
+      
+      <button class="btn btn-ghost btn-sm text-sky-400 hover:bg-sky-800 mt-1 self-start" 
+        (click)="addParticipant()">
+        + Add Participant
+      </button>
+    </div>
+
+    <!-- Error -->
+    @if (errorMessage) {
+    <div class="alert alert-error mt-2 p-2 text-sm">
+      <span>{{ errorMessage }}</span>
+    </div>
+    }
+
+    <!-- Actions -->
+    <div class="modal-action">
+      <button class="btn btn-ghost text-white" (click)="close()">Cancel</button>
+      <button class="btn bg-pink-700 text-white hover:bg-pink-600" 
+        [disabled]="isSubmitting" (click)="submit()">
+        @if (isSubmitting) {
+        <span class="loading loading-spinner loading-sm"></span>
+        }
+        Create Project
+      </button>
+    </div>
+  </div>
+</dialog>

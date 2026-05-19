@@ -87,7 +87,7 @@ services:
     networks:
       - pynet
   pythonserver:
-    image: python:3.13-rc-alpine3.17
+    image: python:3.12-trixie
     volumes:
       - ./PythonContainer:/workspace
     working_dir: /workspace

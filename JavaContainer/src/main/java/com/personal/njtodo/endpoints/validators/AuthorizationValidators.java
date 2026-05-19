@@ -44,8 +44,9 @@ public class AuthorizationValidators {
   public static final void validatePasswordFormat(String password) throws ResponseCompatibleException {
     final boolean match = match("^[\\w\\d@#!]+$", password);
     final boolean bounds = password.length() >= 4 && password.length() <= 12;
-    if (!match || !bounds)
-      (new ResponseCompatibleException(HttpStatus.BAD_REQUEST.value(), "Invalid Account Type")).logAndThrow();
+    if(!match)(new ResponseCompatibleException(HttpStatus.BAD_REQUEST.value(), "Invalid Password Format, Accepted: '^[\\w\\d@#!]+$'")).logAndThrow();
+    if (!bounds)
+      (new ResponseCompatibleException(HttpStatus.BAD_REQUEST.value(), "Invalid Password Length: minimum is 4, maximum is 12")).logAndThrow();
   }
 
   public static final boolean validatePayload(UserClaimDTO payload) throws ResponseCompatibleException {
